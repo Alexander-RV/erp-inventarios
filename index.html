@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERP de Inventarios · Central Mayorista de Antioquia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f4f2;--card:#fff;--ink:#12241f;--mut:#61726c;--line:#dde5e1;--acc:#17805f;--accsoft:#e3f3ed;--side:#0f2a24;--sideink:#bcd3cb;--red:#c0392b;--redbg:#fde9e6;--amb:#a96300;--ambbg:#fdf0d5;--grn:#177a4b;--grnbg:#dff3e7;--blu:#1d4e89;--blubg:#e1ecf9}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1311;--card:#131e1b;--ink:#e7f0ed;--mut:#8fa29b;--line:#25342f;--acc:#4fd1a5;--accsoft:#10302a;--side:#07100e;--sideink:#9db4ac;--red:#ff8a7e;--redbg:#3a1a17;--amb:#f2b45a;--ambbg:#392a10;--grn:#6fd7a0;--grnbg:#12301f;--blu:#8ab8f0;--blubg:#14263d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.55 "Manrope","Segoe UI",system-ui,Arial,sans-serif}
+.app{display:grid;grid-template-columns:252px 1fr;min-height:100vh}
+.side{background:var(--side);color:var(--sideink);padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:11px;align-items:center;padding:0 8px 22px}
+.logo{width:40px;height:40px;border-radius:11px;background:var(--acc);color:#fff;display:grid;place-items:center;flex:none}
+.logo svg{width:23px;height:23px}
+.brand b{display:block;color:#fff;font-size:15px;letter-spacing:-.01em}.brand span{font-size:12px;line-height:1.3;display:block}
+#nav{display:flex;flex-direction:column;gap:2px}
+#nav button{display:flex;justify-content:space-between;align-items:center;background:none;border:0;border-radius:9px;color:var(--sideink);font:inherit;font-weight:600;padding:10px 12px;cursor:pointer;text-align:left}
+#nav button:hover{background:rgba(255,255,255,.06)}
+#nav button.on{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 3px 0 0 #5be0b3}
+.badge{min-width:21px;padding:0 6px;border-radius:11px;background:#e5483a;color:#fff;font-size:12px;text-align:center}
+.foot{margin-top:auto;padding:14px 8px 0;border-top:1px solid rgba(255,255,255,.1);font-size:12px}.foot small{display:block;margin-top:8px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:4px 11px;border-radius:12px;background:var(--ambbg);color:var(--amb)}.pill.ok{background:#14452f;color:#7ff0b8}.pill.bad{background:var(--redbg);color:var(--red)}
+.content{min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:26px 30px 6px}
+h1{font-size:25px;margin:0;letter-spacing:-.02em;font-weight:800}.topbar p{margin:2px 0 0;color:var(--mut)}.date{color:var(--mut);font-size:13px;font-weight:600}
+main{padding:16px 30px 56px;max-width:1180px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}.grid.k{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h2{font-size:16px;margin:0 0 4px;font-weight:800;letter-spacing:-.01em}.card h3{font-size:14px;margin:16px 0 6px}
+.mut{color:var(--mut);font-size:13px}
+.kpi{display:flex;gap:14px;align-items:center}.ico{width:46px;height:46px;border-radius:13px;background:var(--accsoft);display:grid;place-items:center;font-size:22px;flex:none}
+.kpi .v{font-size:23px;white-space:nowrap;font-weight:800;line-height:1.1;letter-spacing:-.02em}
+.tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700}
+.t-ok{background:var(--grnbg);color:var(--grn)}.t-rop{background:var(--ambbg);color:var(--amb)}.t-crit{background:var(--redbg);color:var(--red)}.t-over{background:var(--blubg);color:var(--blu)}
+.tw{overflow-x:auto;margin-top:8px}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mut);font-weight:700;font-size:12px;background:var(--bg)}th:first-child{border-radius:8px 0 0 8px}th:last-child{border-radius:0 8px 8px 0}
+tbody tr:hover td,tr:hover>td{background:var(--accsoft)}tr:last-child td{border-bottom:0}
+.n{text-align:right;font-variant-numeric:tabular-nums}.wrap{white-space:normal}
+.pcard{border-top:5px solid var(--pc)}
+.phead{display:flex;gap:12px;align-items:center}.phead>div:nth-child(2){flex:1}.phead h2{margin:0}
+.emo{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:28px;background:color-mix(in srgb,var(--pc) 18%,transparent)}
+.big{margin:14px 0 0;font-size:30px;font-weight:800;letter-spacing:-.02em}.big small{font-size:14px;font-weight:600;color:var(--mut);margin-left:4px}
+.zw{position:relative;margin:12px 0 6px}.zone{display:flex;height:12px;border-radius:6px;overflow:hidden}
+.zone i{display:block;height:100%}.z1{background:var(--red)}.z2{background:var(--amb)}.z3{background:var(--grn)}.z4{background:var(--blu)}.zone i{opacity:.4}
+.zw em{position:absolute;top:-5px;width:5px;height:22px;background:var(--ink);border-radius:3px;transform:translateX(-50%);border:2px solid var(--card);box-sizing:content-box}
+.zl{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.meta div{background:var(--bg);border-radius:10px;padding:8px 10px}.meta b{display:block;font-size:15px}.meta span{font-size:12px;color:var(--mut)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}input[type=number]{width:92px}
+.btn{border:1px solid var(--acc);background:var(--acc);color:#fff;padding:8px 14px;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}.btn.o{background:none;color:var(--acc)}.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.45;cursor:default;filter:none}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.alert{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:14px 16px;border-radius:12px;border-left:6px solid;margin-bottom:12px}
+.alert.crit{background:var(--redbg);border-color:var(--red)}.alert.rop{background:var(--ambbg);border-color:var(--amb)}.alert.over{background:var(--blubg);border-color:var(--blu)}.alert.ok{background:var(--grnbg);border-color:var(--grn)}
+.thl{paint-order:stroke;stroke:var(--card);stroke-width:3px;font-weight:700}
+.f{font-family:ui-monospace,Consolas,monospace;background:var(--bg);padding:2px 7px;border-radius:5px;font-size:13px}
+svg text{fill:var(--mut);font-size:11px;font-family:inherit}ul{margin:6px 0;padding-left:20px}
+.lg{display:inline-block;width:12px;height:4px;border-radius:2px;margin:0 5px 3px 12px}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:10px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#toast.on{opacity:1}
+.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}.flow span{border:1px solid var(--line);border-radius:9px;padding:7px 13px;background:var(--bg);font-weight:600}
+@media (max-width:860px){.app{grid-template-columns:1fr}.side{position:static;height:auto;padding:14px}.brand{padding-bottom:12px}#nav{flex-direction:row;overflow-x:auto}#nav button{white-space:nowrap}.foot{display:none}.topbar,main{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg></div><div><b>ERP Inventarios</b><span>Central Mayorista de Antioquia</span></div></div>
+  <nav id="nav"></nav>
+  <div class="foot"><span id="st" class="pill">Conectando…</span><small>Datos: DANE · SIPSA</small></div>
+</aside>
+<div class="content">
+  <div class="topbar"><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="date" id="dt"></div></div>
+  <main id="v"></main>
+</div>
+</div>
+<div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const fmt=n=>Math.round(n).toLocaleString('es-CO'),cop=n=>'$'+fmt(n),copM=n=>n>=1e8?'$'+fmt(n/1e6)+' M':cop(n);
+const EST={CRITICO:['crit','Crítico'],REORDENAR:['rop','Reordenar'],SOBRESTOCK:['over','Sobrestock'],NORMAL:['ok','Normal']};
+const tag=p=>`<span class="tag t-${EST[p.estado][0]}">${EST[p.estado][1]}</span>`;
+const PC={'PC-01':['#d9a21b','🥔'],'PG-02':['#6fa83a','🍌'],'PI-03':['#d2462f','🌶️']};
+const pcol=p=>(PC[p.id]||['#17805f'])[0],pemo=p=>(PC[p.id]||[0,'📦'])[1];
+const S={prods:[],ords:[],kar:[],tab:'resumen',sim:null,simId:'',dias:365};
+const MES=['Dic','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago'];
+let tm;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tm);tm=setTimeout(()=>t.classList.remove('on'),2800)}
+async function api(u,b){const o=b===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)};
+ const r=await fetch(u,o);const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.detail||'Error del servidor');return j}
+async function load(){try{[S.prods,S.ords,S.kar]=await Promise.all([api('/api/productos'),api('/api/ordenes'),api('/api/kardex')]);
+ $('#st').textContent='● Conectado a PostgreSQL';$('#st').className='pill ok';if(!S.simId)S.simId=S.prods[0].id}
+ catch(e){$('#st').textContent='Sin conexión con la API';$('#st').className='pill bad'}render()}
+const pend=p=>S.ords.some(o=>o.producto_id===p.id&&o.estado==='PENDIENTE');
+function abc(){const c=[...S.prods].sort((a,b)=>b.costo*b.demanda_anual-a.costo*a.demanda_anual),t=c.reduce((s,p)=>s+p.costo*p.demanda_anual,0);let a=0;const r={};
+ c.forEach(p=>{r[p.id]=a<.5*t?'A':a<.8*t?'B':'C';a+=p.costo*p.demanda_anual});return r}
+function bar(p){const m=Math.max(p.maximo*1.2,p.stock*1.05),x=v=>Math.min(100,v/m*100),a=x(p.stock_seguridad),b=x(p.punto_reorden),c=x(p.maximo);
+ return `<div class="zw"><div class="zone"><i class="z1" style="width:${a}%"></i><i class="z2" style="width:${b-a}%"></i><i class="z3" style="width:${c-b}%"></i><i class="z4" style="width:${100-c}%"></i></div><em style="left:${x(p.stock)}%"></em></div>
+ <div class="zl"><span>Seguridad ${fmt(p.stock_seguridad)}</span><span>Reorden ${fmt(p.punto_reorden)}</span><span>Máx ${fmt(p.maximo)}</span></div>`}
+async function mover(id,tipo){const q=+$('#q-'+id).value;try{await api('/api/movimientos',{producto_id:id,tipo,cantidad:q,nota:tipo==='salida'?'Consumo de producción':'Recepción manual'});toast('Movimiento registrado');await load()}catch(e){toast(e.message)}}
+async function orden(id){try{await api('/api/ordenes',{producto_id:id});toast('Orden de compra creada');await load()}catch(e){toast(e.message)}}
+async function recibir(id){try{await api('/api/ordenes/'+id+'/recibir',{});toast('Pedido recibido y stock actualizado');await load()}catch(e){toast(e.message)}}
+async function simular(){S.simId=$('#sp').value;S.dias=+$('#sd').value;$('#sb').disabled=true;try{S.sim=await api(`/api/simulacion/${S.simId}?dias=${S.dias}`)}catch(e){toast(e.message)}render()}
+function chart(p){const W=560,H=180,L=48,v=p.demanda_mensual,mx=Math.max(...v,p.pronostico_mensual)*1.15,n=v.length+1,bw=(W-L)/n,col=pcol(p);
+ let s=`<svg viewBox="0 0 ${W} ${H+22}" width="100%" role="img" aria-label="Demanda mensual de ${p.nombre}">`;
+ [0,.5,1].forEach(t=>{const y=H-t*H;s+=`<line x1="${L}" x2="${W}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${L-6}" y="${y+4}" text-anchor="end">${fmt(mx*t)}</text>`});
+ v.forEach((x,i)=>{const b=x/mx*H;s+=`<rect x="${L+i*bw+6}" y="${H-b}" width="${bw-12}" height="${b}" fill="${col}" rx="4"/><text x="${L+i*bw+bw/2}" y="${H+15}" text-anchor="middle">${MES[i]||i+1}</text>`});
+ const b=p.pronostico_mensual/mx*H;return s+`<rect x="${L+v.length*bw+6}" y="${H-b}" width="${bw-12}" height="${b}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="5" rx="4"/><text x="${L+v.length*bw+bw/2}" y="${H+15}" text-anchor="middle">Pron.</text></svg>`}
+function simChart(s){const w=760,h=220,a=s.sQ.serie,b=s.RS.serie,n=a.length,mx=Math.max(...a,...b)*1.08,st=Math.ceil(n/240);
+ const pts=r=>r.filter((_,i)=>i%st===0).map((v,i)=>`${(i*st/(n-1)*w).toFixed(1)},${(h-v/mx*h).toFixed(1)}`).join(' '),ry=h-s.punto_reorden/mx*h;
+ return `<svg viewBox="0 0 ${w} ${h+22}" width="100%" role="img" aria-label="Stock simulado"><line x1="0" x2="${w}" y1="${ry}" y2="${ry}" stroke="var(--red)" stroke-dasharray="5"/><text x="4" y="${ry-4}">Punto de reorden</text><polyline points="${pts(a)}" fill="none" stroke="var(--acc)" stroke-width="1.8"/><polyline points="${pts(b)}" fill="none" stroke="var(--amb)" stroke-width="1.8"/><text x="0" y="${h+16}">Día 0</text><text x="${w}" y="${h+16}" text-anchor="end">Día ${n-1}</text></svg>`}
+const hh=d=>d<1?`${Math.max(1,Math.round(d*24))} horas`:`${d.toLocaleString('es-CO')} días`;
+function alertas(p){const a=[];
+ if(p.estado!=='NORMAL')a.push({tipo:'📦 Alarma de stock',c:EST[p.estado][0],ord:p.estado!=='SOBRESTOCK',txt:{CRITICO:`Stock (${fmt(p.stock)}) en o bajo el stock de seguridad (${fmt(p.stock_seguridad)}).`,REORDENAR:`Stock (${fmt(p.stock)}) bajo el punto de reorden (${fmt(p.punto_reorden)}). Pedir ${fmt(p.eoq)} ${p.unidad}.`,SOBRESTOCK:`Stock (${fmt(p.stock)}) sobre el máximo (${fmt(p.maximo)}). Suspender compras.`}[p.estado]});
+ const t=p.alarma_tiempo;
+ if(t!=='OK')a.push({tipo:'⏱ Alarma de tiempo',c:t==='CRITICA'?'crit':'rop',ord:true,txt:t==='CRITICA'?`El stock dura ${hh(p.dias_hasta_quiebre)} y el pedido tarda ${p.lead_time} días en llegar: hay riesgo de quiebre aunque se pida hoy.`:t==='REORDENAR'?`El stock ya está en el punto de reorden y alcanza para ${hh(p.dias_hasta_quiebre)}. El pedido tarda ${p.lead_time} días.`:`Faltan ${hh(p.dias_hasta_rop)} para llegar al punto de reorden. Prepara la orden de compra.`});
+ if(p.alarma_consumo){const tasa=Math.max(p.consumo_24h,p.demanda_diaria),dr=Math.max(0,(p.stock-p.punto_reorden)/tasa);
+  a.push({tipo:'⚡ Alarma de consumo',c:'crit',ord:true,txt:`Se consumieron ${fmt(p.consumo_24h)} ${p.unidad} en 24 h, ${p.ratio_consumo.toLocaleString('es-CO')} veces lo esperado (${p.demanda_diaria} por día). A este ritmo ${dr<=0?'ya se está en el punto de reorden.':'se llega al punto de reorden en '+hh(dr)+'.'}`})}
+ return a}
+function proyectar(p,tasa,dias){const L=p.lead_time,v=[],ev=[];let s=p.stock,ped=S.ords.some(o=>o.producto_id===p.id&&o.estado==='PENDIENTE')?{dia:L,q:p.eoq}:null;
+ if(!ped&&s<=p.punto_reorden){ped={dia:L,q:p.eoq};ev.push(0)}
+ for(let t=1;t<=dias;t++){if(ped&&t>=ped.dia){s+=ped.q;ped=null}s=Math.max(0,s-tasa);if(!ped&&s<=p.punto_reorden){ped={dia:t+L,q:p.eoq};ev.push(t)}v.push(s)}
+ return {v,ev}}
+function cicloChart(p){const W=760,H=230,L0=54,n=30,bs=proyectar(p,p.demanda_diaria,n),ac=p.alarma_consumo?proyectar(p,Math.max(p.consumo_24h,p.demanda_diaria),n):null;
+ const mx=Math.max(p.maximo,p.stock,...bs.v,...(ac?ac.v:[0]))*1.1,bw=(W-L0)/(n+1),y=v=>H-v/mx*H,x=i=>L0+i*bw,vals=[p.stock,...bs.v];
+ let s=`<svg viewBox="0 0 ${W} ${H+24}" width="100%" role="img" aria-label="Ciclo de inventario de ${p.nombre}">`;
+ [0,.5,1].forEach(t=>{const yy=H-t*H*(1/1.1);s+=`<line x1="${L0}" x2="${W}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L0-6}" y="${yy+4}" text-anchor="end">${fmt(mx*t/1.1)}</text>`});
+ vals.forEach((v,i)=>{const c=v<=p.stock_seguridad?'var(--red)':v<=p.punto_reorden?'var(--amb)':'var(--grn)';
+  s+=`<rect x="${x(i)+1.5}" y="${y(v)}" width="${bw-3}" height="${Math.max(0,H-y(v))}" fill="${c}" opacity=".8" rx="2"/>`;
+  if(i%5===0)s+=`<text x="${x(i)+bw/2}" y="${H+16}" text-anchor="middle">${i===0?'Hoy':'Día '+i}</text>`});
+ [[p.maximo,'Máximo','var(--blu)','2 4'],[p.punto_reorden,'Punto de reorden','var(--amb)','7 4'],[p.stock_seguridad,'Stock de seguridad','var(--red)','7 4']].forEach(([v,l,c,d])=>{
+  s+=`<line x1="${L0}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-width="1.8" stroke-dasharray="${d}"/><text class="thl" x="${W-2}" y="${y(v)-5}" text-anchor="end" style="fill:${c}">${l} ${fmt(v)}</text>`});
+ if(ac)s+=`<polyline fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="5 3" points="${[p.stock,...ac.v].map((v,i)=>`${x(i)+bw/2},${y(v)}`).join(' ')}"/>`;
+ bs.ev.forEach(t=>{s+=`<text x="${x(t)+bw/2}" y="${y(vals[t])-5}" text-anchor="middle" style="fill:var(--ink);font-size:13px">▲</text>`});
+ return s+'</svg>'}
+const cicloLeyenda=p=>`<div class="mut" style="margin-top:4px"><span class="lg" style="background:var(--grn)"></span>Sobre el punto de reorden<span class="lg" style="background:var(--amb)"></span>Entre reorden y seguridad<span class="lg" style="background:var(--red)"></span>Bajo la seguridad<span style="margin-left:14px">▲ se genera la orden de compra</span>${p.alarma_consumo?'<span class="lg" style="background:var(--ink)"></span>Ritmo de consumo actual':''}</div>`;
+const kp=(i,l,v,s,c)=>`<div class="card kpi"><div class="ico">${i}</div><div><div class="mut">${l}</div><div class="v" ${c?`style="color:${c}"`:''}>${v}</div><div class="mut">${s}</div></div></div>`;
+const V={
+resumen(){const A=abc(),al=S.prods.reduce((s,p)=>s+alertas(p).length,0),np=S.ords.filter(o=>o.estado==='PENDIENTE').length;
+ return `<div class="grid k">${kp('💰','Valor del inventario',cop(S.prods.reduce((s,p)=>s+p.stock*p.costo,0)),'Stock × costo unitario')}${kp('🔔','Alarmas activas',al,'stock · tiempo · consumo',al?'var(--red)':'var(--grn)')}${kp('🧾','Órdenes pendientes',np,'Esperando recepción')}${kp('📊','Costo anual (EOQ)',copM(S.prods.reduce((s,p)=>s+p.costo_anual,0)),'Compra + pedido + mantener')}</div>
+ <div class="card" style="margin-top:16px"><h2>Estado de stock</h2><div class="tw"><table><tr><th>Producto</th><th>ABC</th><th class="n">Stock</th><th class="n">Punto de reorden</th><th class="n">Cobertura</th><th>Estado</th></tr>
+ ${S.prods.map(p=>`<tr><td><b>${pemo(p)} ${p.nombre}</b> <span class="mut">${p.id}</span></td><td>${A[p.id]}</td><td class="n">${fmt(p.stock)} ${p.unidad}</td><td class="n">${fmt(p.punto_reorden)}</td><td class="n">${p.cobertura_dias} días</td><td>${tag(p)}</td></tr>`).join('')}</table></div></div>`},
+prod(){const A=abc();return `<div class="grid">${S.prods.map(p=>`<div class="card pcard" style="--pc:${pcol(p)}"><div class="phead"><div class="emo">${pemo(p)}</div><div><h2>${p.nombre}</h2><div class="mut">${p.id} · Clase ${A[p.id]} · Vida útil ${p.vida_util} días</div></div>${tag(p)}</div>
+ <div class="big">${fmt(p.stock)}<small>${p.unidad} en bodega</small></div>${bar(p)}
+ <div class="meta"><div><b>${p.demanda_diaria}</b><span>consumo diario</span></div><div><b>${p.cobertura_dias} d</b><span>cobertura</span></div><div><b>${p.lead_time} d</b><span>lead time</span></div></div>
+ <div class="mut">Origen: ${p.origen}</div><div class="mut">Consumo últimas 24 h: <b>${fmt(p.consumo_24h)} ${p.unidad}</b> (${p.ratio_consumo.toLocaleString('es-CO')}× lo esperado)</div>
+ <div class="row"><input type="number" min="1" value="100" id="q-${p.id}" aria-label="Cantidad"><button class="btn o" onclick="mover('${p.id}','salida')">Registrar consumo</button><button class="btn o" onclick="mover('${p.id}','entrada')">Registrar entrada</button></div>
+ <div class="row"><button class="btn" ${pend(p)?'disabled':''} onclick="orden('${p.id}')">${pend(p)?'Orden pendiente':'Generar orden de compra ('+fmt(p.eoq)+')'}</button></div></div>`).join('')}</div>
+ <div class="card" style="margin-top:16px"><h2>Kardex de movimientos</h2>${S.kar.length?`<div class="tw"><table><tr><th>Fecha</th><th>Producto</th><th>Movimiento</th><th class="n">Cantidad</th><th class="n">Stock</th><th>Nota</th></tr>${S.kar.map(k=>`<tr><td>${new Date(k.fecha).toLocaleString('es-CO')}</td><td>${k.nombre}</td><td><span class="tag ${k.tipo==='salida'?'t-rop':'t-ok'}">${k.tipo==='salida'?'Salida':'Entrada'}</span></td><td class="n">${fmt(k.cantidad)}</td><td class="n">${fmt(k.stock_resultante)}</td><td>${k.nota||''}</td></tr>`).join('')}</table></div>`:'<div class="mut">Aún no hay movimientos. Registra un consumo o recibe una orden de compra.</div>'}</div>`},
+ords(){return `<div class="card"><h2>Flujo de reposición</h2><div class="flow"><span>🔔 Alarma de reorden</span>→<span>🧾 Generar orden</span>→<span>🚚 Proveedor despacha</span>→<span>📥 Recibir</span>→<span>✅ Stock actualizado</span></div></div>
+ <div class="card" style="margin-top:16px"><h2>Órdenes de compra</h2>${S.ords.length?`<div class="tw"><table><tr><th>N°</th><th>Producto</th><th class="n">Cantidad</th><th>Creada</th><th>Estado</th><th></th></tr>${S.ords.map(o=>`<tr><td>#${o.id}</td><td>${o.nombre}</td><td class="n">${fmt(o.cantidad)} ${o.unidad}</td><td>${new Date(o.creada).toLocaleString('es-CO')}</td><td><span class="tag ${o.estado==='PENDIENTE'?'t-rop':'t-ok'}">${o.estado==='PENDIENTE'?'Pendiente':'Recibida'}</span></td><td>${o.estado==='PENDIENTE'?`<button class="btn" onclick="recibir(${o.id})">Recibir pedido</button>`:''}</td></tr>`).join('')}</table></div>`:'<div class="mut">No hay órdenes. Genera una desde Productos y stock o desde Alarmas.</div>'}</div>`},
+dem(){return S.prods.map(p=>{const al=alertas(p),at=al.find(a=>a.tipo.includes('tiempo')),ac=al.find(a=>a.tipo.includes('consumo'));
+ const box=(t,a,ok)=>`<div class="alert ${a?a.c:'ok'}" style="margin:0"><div><b>${t}</b> <span class="tag t-${a?(a.c==='crit'?'crit':'rop'):'ok'}">${a?'Activa':'Normal'}</span><div>${a?a.txt:ok}</div></div></div>`;
+ return `<div class="card pcard" style="--pc:${pcol(p)};margin-bottom:16px"><div class="phead"><div class="emo">${pemo(p)}</div><div><h2>${p.nombre}</h2><div class="mut">Stock actual ${fmt(p.stock)} ${p.unidad} · lote EOQ ${fmt(p.eoq)} · lead time ${p.lead_time} días</div></div>${tag(p)}</div>
+ <h3>Ciclo de inventario: proyección a 30 días</h3><div class="mut">Cada columna es el stock al final del día. Al cruzar el punto de reorden se genera la orden por el lote EOQ y el pedido llega después del lead time.</div>${cicloChart(p)}${cicloLeyenda(p)}
+ <div class="grid" style="margin-top:12px">${box('⏱ Alarma de tiempo',at,`Faltan ${hh(p.dias_hasta_rop)} para llegar al punto de reorden. El pedido tarda ${p.lead_time} días.`)}${box('⚡ Alarma de consumo',ac,`Consumo en 24 h: ${fmt(p.consumo_24h)} ${p.unidad} (${p.ratio_consumo.toLocaleString('es-CO')}× lo esperado). Se activa si supera ${p.umbral_consumo.toLocaleString('es-CO')}×.`)}</div>
+ <div class="meta"><div><b>${fmt(p.demanda_anual)} ${p.unidad}</b><span>demanda anual (D)</span></div><div><b>${fmt(p.pronostico_mensual)}</b><span>pronóstico próx. mes (α=0.3)</span></div><div><b>${p.demanda_diaria}</b><span>consumo diario esperado</span></div></div>
+ <h3>Modelos aplicados</h3><div class="grid">
+ <div><b>EOQ (lote económico)</b><br><span class="f">Q* = √(2·D·S / H)</span><br>S=${cop(p.costo_pedir)}, H=${cop(p.H)}/${p.unidad}-año → EOQ ${fmt(p.eoq_teorico)}${p.eoq<p.eoq_teorico?', limitado por vida útil a <b>'+fmt(p.eoq)+'</b>':' → <b>'+fmt(p.eoq)+'</b>'} (${p.pedidos_anuales} pedidos/año)</div>
+ <div><b>Stock de seguridad</b><br><span class="f">SS = z · σd · √L</span><br>Servicio ${p.nivel_servicio}% (z=${p.z}) → <b>${fmt(p.stock_seguridad)}</b></div>
+ <div><b>Punto de reorden</b><br><span class="f">ROP = d·L + SS</span><br>${p.demanda_diaria}×${p.lead_time} + ${fmt(p.stock_seguridad)} → <b>${fmt(p.punto_reorden)}</b></div></div>
+ <details style="margin-top:14px"><summary class="mut" style="cursor:pointer">Ver historial mensual de demanda (DANE-SIPSA)</summary>${chart(p)}</details></div>`}).join('')},
+pol(){const A=abc();return `<div class="card"><h2>Políticas de inventario</h2><div class="mut">Reglas que el sistema aplica para decidir cuánto, cuándo y cómo se repone y se consume.</div><div class="tw"><table><tr><th>Producto</th><th>Clase</th><th>Sistema de control</th><th>Regla de reposición</th><th>Regla de consumo</th><th>Servicio</th></tr>
+ ${S.prods.map(p=>`<tr><td><b>${pemo(p)} ${p.nombre}</b></td><td>${A[p.id]}</td><td>Revisión continua (s, Q)</td><td>Si stock ≤ ${fmt(p.punto_reorden)}, pedir ${fmt(p.eoq)} ${p.unidad}${p.eoq<p.eoq_teorico?' (limitado por vida útil de '+p.vida_util+' días)':''}</td><td>${p.politica}</td><td>${p.nivel_servicio}%</td></tr>`).join('')}</table></div></div>
+ <div class="grid" style="margin-top:16px"><div class="card"><h2>Reglas generales</h2><ul><li>Todo consumo y toda entrada quedan en el kardex.</li><li>Perecederos: FEFO, sale primero el lote que vence antes.</li><li>Ningún pedido supera el 80% del consumo de la vida útil.</li><li>No se consume stock de seguridad sin autorización del jefe de bodega.</li></ul></div>
+ <div class="card"><h2>Clasificación ABC</h2><ul><li>A: 50% del valor anual, control estricto.</li><li>B: siguiente 30%, control moderado.</li><li>C: último 20%, control simple.</li></ul></div>
+ <div class="card"><h2>Escalamiento de alarmas</h2><ul><li>Reordenar: compras genera la orden en 24 h.</li><li>Crítico: aviso al jefe de bodega y pedido urgente.</li><li>Sobrestock: se suspende la compra y se revisa el pronóstico.</li></ul></div></div>`},
+alm(){const r=S.prods.flatMap(p=>alertas(p).map(a=>({p,a})));if(!r.length)return `<div class="card"><h2>✅ Sin alarmas</h2><div class="mut">Stock, tiempo y consumo están dentro de lo normal en todos los productos.</div></div>`;
+ return r.map(({p,a})=>`<div class="alert ${a.c}"><div><b>${a.tipo}</b> · ${pemo(p)} <b>${p.nombre}</b> <span class="mut">${p.id}</span><div>${a.txt}</div></div>${a.ord?`<button class="btn" ${pend(p)?'disabled':''} onclick="orden('${p.id}')">${pend(p)?'Orden pendiente':'Generar orden de compra'}</button>`:''}</div>`).join('')},
+sim(){const s=S.sim;return `<div class="card"><h2>Simulación de operación</h2><div class="mut">Simula días de operación con demanda aleatoria (normal, variabilidad real del DANE) y compara dos políticas con la misma demanda: revisión continua (s, Q) y revisión periódica cada 7 días hasta un nivel objetivo (R, S).</div>
+ <div class="row"><select id="sp" aria-label="Producto">${S.prods.map(p=>`<option value="${p.id}" ${p.id===S.simId?'selected':''}>${p.nombre}</option>`).join('')}</select><select id="sd" aria-label="Días"><option value="180" ${S.dias==180?'selected':''}>180 días</option><option value="365" ${S.dias==365?'selected':''}>365 días</option><option value="730" ${S.dias==730?'selected':''}>730 días</option></select><button class="btn" id="sb" onclick="simular()">Simular</button></div></div>
+ ${s?`<div class="card" style="margin-top:16px"><h2>${s.producto}: ${s.dias} días</h2><div class="tw"><table><tr><th>Política</th><th class="n">Nivel de servicio</th><th class="n">Días con quiebre</th><th class="n">Pedidos</th><th class="n">Stock promedio</th><th class="n">Costo de pedir</th><th class="n">Costo de mantener</th><th class="n">Costo total</th></tr>
+ ${[['sQ','Revisión continua (s, Q)','var(--acc)'],['RS','Revisión periódica (R, S)','var(--amb)']].map(([k,n,c])=>`<tr><td><span class="lg" style="background:${c}"></span>${n}</td><td class="n">${s[k].nivel_servicio}%</td><td class="n">${s[k].dias_quiebre}</td><td class="n">${s[k].pedidos}</td><td class="n">${fmt(s[k].stock_promedio)}</td><td class="n">${cop(s[k].costo_pedir)}</td><td class="n">${cop(s[k].costo_mantener)}</td><td class="n"><b>${cop(s[k].costo_total)}</b></td></tr>`).join('')}</table></div>
+ <p><b>Resultado:</b> ${s.sQ.costo_total<=s.RS.costo_total?'la revisión continua (s, Q)':'la revisión periódica (R, S)'} cuesta ${cop(Math.abs(s.sQ.costo_total-s.RS.costo_total))} menos en el período${s.sQ.nivel_servicio===s.RS.nivel_servicio?', con el mismo nivel de servicio.':'; el mejor servicio lo da '+(s.sQ.nivel_servicio>s.RS.nivel_servicio?'(s, Q).':'(R, S).')}</p>
+ <h3>Stock diario</h3>${simChart(s)}<div class="mut"><span class="lg" style="background:var(--acc)"></span>(s, Q)<span class="lg" style="background:var(--amb)"></span>(R, S)<span class="lg" style="background:var(--red)"></span>Punto de reorden</div></div>`:''}`},
+fue(){const r=[['Tonelaje mensual que ingresa a la Central Mayorista de Antioquia, dic 2025 a ago 2026 (102.341; 93.718; 93.743; 100.501; 94.819; 98.957; 96.431; 104.728; 98.519 t)','DANE, SIPSA-A, boletines mensuales de abastecimiento','Real'],['Variabilidad diaria del abastecimiento (CV = 10,9%)','DANE, SIPSA, boletín diario del 24-sep-2026, tonelaje diario de la Central Mayorista de Antioquia','Real'],['Precio mayorista: papa criolla $4.225/kg, plátano guineo $1.325/kg, pimentón $2.675/kg','DANE, SIPSA, boletín diario del 24-sep-2026','Real'],['Municipios de origen de cada producto','Mismo boletín diario de SIPSA','Real'],['Demanda base mensual del distribuidor (18.000, 30.000 y 9.000 kg)','Supuesto del ejercicio: SIPSA no publica la demanda de una empresa. Se escala con la estacionalidad real del mercado','Supuesto'],['Stock inicial, costo de pedir, lead time, vida útil, costo de mantener y nivel de servicio','Supuestos del ejercicio. Se reemplazan con datos de la empresa','Supuesto']];
+ return `<div class="card" style="border-left:6px solid var(--amb)"><h2>Qué es real y qué es supuesto</h2><div class="tw"><table><tr><th>Dato</th><th>Fuente</th><th>Tipo</th></tr>${r.map(x=>`<tr><td class="wrap">${x[0]}</td><td class="wrap">${x[1]}</td><td><span class="tag ${x[2]==='Real'?'t-ok':'t-rop'}">${x[2]}</span></td></tr>`).join('')}</table></div></div>
+ <div class="card" style="margin-top:16px"><h2>Arquitectura del sistema</h2><div class="flow"><span>🖥️ Navegador (interfaz)</span>→<span>⚙️ API FastAPI (Python)</span>→<span>📐 Modelos de inventario</span>→<span>🗄️ PostgreSQL</span></div>
+ <ul><li><b>productos:</b> parámetros y stock actual de cada SKU.</li><li><b>demanda:</b> serie mensual por producto.</li><li><b>movimientos:</b> kardex de entradas y salidas.</li><li><b>ordenes_compra:</b> pedidos pendientes y recibidos.</li></ul></div>`}
+};
+const TABS=[['resumen','Resumen','Estado del inventario de un vistazo'],['prod','Productos y stock','Existencias, consumo y reposición por producto'],['ords','Órdenes de compra','Pedidos a proveedores y su recepción'],['dem','Demanda y modelos','Ciclo de inventario, alarmas de tiempo y consumo, y modelos'],['pol','Políticas','Reglas de reposición y consumo'],['alm','Alarmas','Productos que requieren acción'],['sim','Simulación','Comparación de políticas con demanda aleatoria'],['fue','Fuentes y arquitectura','De dónde sale la data y cómo está construido']];
+function render(){const n=S.prods.reduce((s,p)=>s+alertas(p).length,0),t=TABS.find(x=>x[0]===S.tab);
+ $('#nav').innerHTML=TABS.map(x=>`<button class="${S.tab===x[0]?'on':''}" onclick="S.tab='${x[0]}';render()">${x[1]}${x[0]==='alm'&&n?`<span class="badge">${n}</span>`:''}</button>`).join('');
+ $('#ttl').textContent=t[1];$('#sub').textContent=t[2];$('#dt').textContent=new Date().toLocaleDateString('es-CO',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ $('#v').innerHTML=S.prods.length?V[S.tab]():'<div class="card"><h2>Sin datos</h2><div class="mut">No se pudo leer la API. Revisa que uvicorn esté corriendo y que PostgreSQL esté activo.</div></div>'}
+load();
+</script>
+</body>
+</html>
